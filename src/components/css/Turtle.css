@@ -1,0 +1,107 @@
+.Turtle_Background{
+    width: 61.0417vw;
+    height: 70.5556vh;
+    flex-shrink: 0;
+    background: #ACDFFF;;
+    position: absolute;
+    right: 1.9271vw;
+    bottom: 5.4630vh;
+}
+
+.Road {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.UnderTheSea_LinkContainer, 
+.Space_LinkContainer, 
+.Sky_LinkContainer, 
+.Forest_LinkContainer, 
+.Locked1,
+.Locked2,
+.Locked3,
+.Locked4 {
+    width: 17.1354vw;
+    height: 25.3704vh;
+    border-radius: 2.1rem;
+    background: #FFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.0370vh 1.5104vw;
+    box-sizing: border-box;
+}
+
+.UnderTheSea_LinkContainer{
+    position: absolute;
+    top: 7.4074vh;
+    left: 1.7708vw;
+    z-index: 2;
+}
+
+
+.Space_LinkContainer {
+    position: absolute;
+    top: 40.3704vh;
+    left: 11.8750vw;
+}
+
+.Sky_LinkContainer {
+    position: absolute;
+    top: 7.4074vh;
+    right: 1.7708vw;
+}
+
+.Forest_LinkContainer {
+    position: absolute;
+    top: 7.4074vh;
+    left: 21.9271vw;
+}
+
+.Where_Link {
+    width: 14.0625vw;
+    height: 16.8519vh;
+    object-fit: cover;
+    margin-top: 2.2222vh;/* 이미지와 텍스트 사이 간격 추가 */
+}
+
+.Where_Link_Text {
+    width: 6.1979vw;
+    height: 1.4815vh;
+    color: #000;
+    text-align: center;
+    font-family: Inter;
+    font-size: 1.3rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 20.614px */
+    margin-top: 2.4074vh;
+    margin-left: 0%;
+}
+
+/* 위치에 맞게 잠금 이미지 배치 */
+.Locked1 {
+    position: absolute;
+    top: 40.3704vh;
+    right: 11.8750vw;
+}
+
+.Locked2 {
+    position: absolute;
+    top: 7.4074vh;
+    left: 21.9271vw;
+}
+
+.Locked3 {
+    position: absolute;
+    top: 7.4074vh;
+    right: 1.7708vw;
+}
+
+.Locked4 {
+    position: absolute;
+    top: 40.3704vh;
+    left: 11.8750vw;
+}

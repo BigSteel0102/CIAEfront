@@ -1,0 +1,424 @@
+.FreeBoard, .InfoBoard, .WorryBoard {
+    width: 18vw;
+    color: #009DFF;
+    text-align: center;
+    font-family: Inter;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 100%;
+    cursor: pointer;
+    padding-bottom: 0.3rem;
+}
+
+.selected {
+    border-bottom: 0.3rem solid #009DFF; /* 선택된 게시판 하단 라인 */
+    z-index: 1;
+}
+
+.FreeBoard {
+    position: absolute;
+    top: 7.6851vh;
+    left: 1.21875vw;
+}
+
+.InfoBoard {
+    position: absolute;
+    top: 7.6851vh;
+    left: 20.84375vw;
+}
+
+.WorryBoard {
+    position: absolute;
+    top: 7.6851vh;
+    right: 3.91875vw;
+}
+.board {
+    width: 58.6458vw;
+    height: 64.3518vh;
+    border: 0.18rem solid #009DFF;
+    background: #FFF;
+    position: absolute;
+    top: 13.703vh;
+    left: 3.125vw;
+    overflow-y: auto; /* 내용이 넘칠 때 스크롤 생성 */
+    overflow-x: hidden;
+}
+
+.searchContainer {
+    position: relative;
+    top: 1.6666vh;
+    left: 1.6145vw;
+}
+.searchInput {
+    width: 15.46875vw;
+    height: 3.796vh;
+    flex-shrink: 0;
+    padding-left: 3.9583vw;
+    border-radius: var(--Corner-Full, 1000px);
+    background: #EBEBEB;
+    border-width: 0;
+}
+
+.searchInput::placeholder {
+    color: #797979;
+    font-family: Inter;
+    font-size: 1.2rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%;
+}
+
+.searchButton {
+    color: #797979;
+    text-align: center;
+    font-family: Inter;
+    font-size: 20.614px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 20.614px */
+    position: absolute;
+    top: 0.7vh;
+    left: 1vw;
+}
+
+.SearchImg {
+    width: 1.3rem;
+}
+
+.PostButton {
+    width: 4.5rem;
+    position: absolute;
+    bottom: 2vh;
+    right: 1.7vw;
+    cursor: pointer;
+}
+.userPost {
+    position: relative;
+    top: 10vh;
+    left: 25vw;
+}
+
+.userList {
+    height: 12.5vh;
+    display: flex;
+    align-items: center;
+    padding-left: 10.3125vw;
+    border-bottom: 1px solid #009DFF;
+    font-family: Inter;
+    font-size: 1rem;
+    color: #333;
+    font-weight: 500;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.board ul {
+    list-style-type: none; /* 기본 목록 스타일 제거 */
+    padding: 0;
+    margin: 0;
+    overflow-y: auto; /* 목록이 길어지면 스크롤 추가 */
+}
+
+.contentBorder {
+    width: 100%; /* 부모 요소에 맞게 넓이를 설정 */
+    border-top: 1px solid #009DFF; /* 위쪽에 구분선 추가 */
+    margin-top: 3.1vh; /* 검색창 아래 여백 */
+    margin-bottom: 1vh; /* 내용과의 여백 */
+}
+
+.viewTitle {
+    color: #000;
+    font-family: Inter;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 20.614px */
+    position: absolute;
+    top: 7.296vh;
+    left: 8.489vw;
+
+}
+
+.viewContent {
+    color: #000;
+    font-family: Inter;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 20.614px */
+    position: absolute;
+    top: 19.7222vh;
+    left: 4vw;
+}
+
+.reply {
+    width: 52.5vw;
+    height: 4.6037vh;
+    border-radius: 2rem;
+    background: #D9D9D9;
+    position: fixed;
+    top: 75.4814vh;
+    left: 35.572vw;
+    border-width: 0;
+    z-index: 1;
+}
+
+.reply::placeholder {
+    color: #797979;
+    font-family: Inter;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 20.614px */
+}
+
+.replyPost {
+    width: 1.8rem;
+    position: fixed;
+    top: 75.7814vh;
+    left: 86.472vw; 
+    z-index: 2;
+}
+
+.Avatar {
+    width: 3.8rem;
+    position: absolute;
+    top: 8vh;
+    left: 3.7vw;
+}
+
+.mainAvatar {
+    width: 4rem;
+    position: absolute;
+    left: 3.28125vw;
+}
+
+.titleOfContent {
+    color: #000;
+    text-align: center;
+    font-family: Inter;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 20.614px */
+    position: absolute;
+    left: 5vw;
+}
+.borderfromtext {
+    width: 58.6458vw;
+    height: 1vh;
+    border-color: #009DFF;
+    position: absolute;
+    top: 35.2777vh;
+    z-index: 10;
+}
+
+.UsersendReply {
+    width: 1.6rem;
+    position: absolute;
+    top: 30.4629vh;
+    left: 8.2291vw;
+}
+
+.Respond {
+    color: #797979;
+    font-family: Inter;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 20.614px */
+    position: absolute;
+    top: 29.6629vh;
+    left: 6.8291vw;
+}
+
+.Heart {
+    width: 1.6rem;
+    position: absolute;
+    top: 30.6629vh;
+    left: 3.84375vw;
+}
+
+.HeartNum {
+    color: #797979;
+    font-family: Inter;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 20.614px */
+    position: absolute;
+    top: 29.5629vh;
+    left: 2.44375vw; 
+}
+
+.divider {
+    width: 100%; /* 부모 요소에 맞게 전체 너비 설정 */
+    height: 0.1rem;
+    background: #009DFF; /* 구분선 색상 */
+    position: absolute;
+    top: 35.277vh;
+}
+
+.replyList {
+    list-style-type: none; /* 기본 목록 스타일 제거 */
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    position: absolute;
+    top: 35.2777vh;
+}
+
+.replyItem {
+    width: 100%;
+    height: 12.5vh;
+    display: flex;
+    align-items: center;
+    padding-left: 10.3125vw;
+    border-bottom: 1px solid #009DFF; /* 화면 너비에 꽉 차는 구분선 */
+    font-family: Inter;
+    font-size: 1rem;
+    color: #333;
+    font-weight: 500;
+    box-sizing: border-box;
+}
+
+
+.ReplyAvatar {
+    width: 3.5rem;
+    position: absolute;
+    left: 3.28125vw;
+}
+
+.ReplyText {
+    position: absolute;
+    left: 5vw; /* 아바타와 텍스트 사이 간격 조정 */
+    color: #000;
+    font-family: Inter;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 20.614px */
+}
+.titleInput,
+.contentInput {
+    color: transparent; /* 입력 텍스트를 보이지 않게 설정 */
+    background-color: transparent; /* 배경을 투명하게 설정 */
+    border: none; /* 테두리를 제거 */
+    outline: none; /* 클릭 시 외곽선 제거 */
+    color: black;
+    font-family: Inter;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 20.614px */
+    border-width: 0;
+    padding-top: 0.7rem;
+}
+
+.titleInput::placeholder,
+.contentInput::placeholder {
+    color: #797979; /* placeholder 텍스트 색상 설정 */
+    font-family: Inter;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.titleInput {
+    position: absolute;
+    top: 12.892vh;
+    left: 9.21875vw;
+}
+
+.contentInput {
+    width: 90%;
+    height: 90%;
+    position: absolute;
+    top: 24.6666vh;
+    left: 4.92708vw;
+}
+
+.WritingAvatar {
+    width: 4rem;
+    position: absolute;
+    top: 11.592vh;
+    left: 4.71875vw;
+}
+
+.LetsPost {
+    width: 10.2219vw;
+    height: 6.3021vh;
+    flex-shrink: 0;
+    border-radius: 2rem;
+    background: #009DFF;
+    font-size: 1.4rem;
+    font-weight: 700;
+    position: absolute;
+    top: 54.2778vh;
+    left: 25.2083vw;
+}
+.Post {
+    position: relative;
+    bottom: 1vh;
+    right: 1.23vw;
+}
+.dividerS {
+    width: 100%; /* 부모 요소에 맞게 전체 너비 설정 */
+    height: 0.1rem; /* 구분선 두께 조정 */
+    background: #009DFF; /* 구분선 색상 */
+    position: absolute; /* 부모 요소에 따라 위치 설정 */
+    top: 3.6vh;
+}
+
+.dropdownHeader {
+    color: #009DFF;
+    text-align: center;
+    font-family: Inter;
+    font-size: 1.3rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 20.614px */
+    border-width: 0;
+    position: absolute;
+    left: 27.7vw;
+    top: 0.7vh;
+}
+
+.dropdownList{
+    width: 9.53125vw;
+    height: 21.11vh;
+    flex-shrink: 0;
+    border: 0.15rem solid #009DFF;
+    background: #FFF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    position: absolute;
+    left: 33.435vw;
+    top: 0.1vh;
+    z-index: 3;
+}
+.dropdownItem {
+    display: inline-block; /* 글자 너비에 맞게 구분선 설정 */
+    color: #009DFF;
+    text-align: center;
+    font-family: Inter;
+    font-size: 1.2rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.5rem; /* 줄 간격 조정 */
+    padding: 0.9rem 0 0 0; /* 위쪽 여백은 유지하고, 아래쪽 여백 줄임 */
+    margin: 0; /* 마진 제거 */
+    position: relative;
+    top: 3.4vh;
+    left: 2.3vw;
+}
+
+.dropdownItem:hover {
+    border-bottom: 0.1rem solid #009DFF; /* 글자에 더 가깝게 구분선 설정 */
+}
+
+
+.dropdown {
+    position: absolute;
+    right: 24.0125vw;
+    top: 1vh;
+    z-index: 5;
+}

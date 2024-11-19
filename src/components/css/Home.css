@@ -1,0 +1,157 @@
+/* 메뉴 박스 스타일 */
+
+.pageName {
+    color: #000;
+    text-align: center;
+    font-family: Inter;
+    font-size: 1.4rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 20.614px */
+    position: absolute;
+    top: 3.2639vh;
+    right: 12.7083vw;
+}
+
+.logOut {
+    color: #000;
+    text-align: center;
+    font-family: Inter;
+    font-size: 1.4rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 20.614px */
+    position: absolute;
+    top: 3.2639vh;
+    right: 4.1667vw;
+
+}
+
+.helloWorld {
+    display: flex;
+    width: 35.3645vw;
+    height: 14.074vh;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #000;
+    font-family: Inter;
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 48px */
+}
+
+.Baby {
+    width: 27.76041dvw;
+    height: 29.72222222222222vh;
+    position: absolute;
+    top: 22.5vh;
+    left: 4.0458vw;
+}
+
+.CIAEIntro {
+    color: #000;
+    font-family: Inter;
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 30px */
+    position: absolute;
+    top: 15.070vh;
+}
+
+.SiteIntro {
+    color: #000;
+    font-family: Inter;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%; /* 24px */
+    letter-spacing: 0.01rem;
+    position: absolute;
+    top: 21vh;
+    right: 5.6458vw;
+}
+
+.question1 {
+    color: #000;
+    font-family: Inter;
+    font-size: 1.46rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 30px */
+    position: absolute;
+    top: 28.5vh;
+    right: 5.6458vw; 
+}
+
+.answer {
+    color: #000;
+    font-family: Inter;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%; /* 24px */
+    letter-spacing: 0.01rem;
+    position: absolute;
+    top: 34vh;
+    right: 5.6458vw; 
+}
+
+.How {
+    color: #000;
+    font-family: Inter;
+    font-size: 1.46rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 30px */
+    position: absolute;
+    top: 55vh;
+}
+
+.LikeThis {
+    color: #000;
+    font-family: Inter;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 120%; /* 24px */
+    letter-spacing: 0.01rem;
+    position: absolute;
+    top: 60vh;
+}
+
+.StartYeah {
+    color: #000;
+    text-align: center;
+    font-family: Inter;
+    font-size: 1.46rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 140%; /* 42px */
+    position: absolute;
+    top: 70vh;
+    right: 5.6458vw; 
+}
+
+.AIImg {
+    width: 20.625vw;
+    height: 20.740vh;
+    flex-shrink: 0;
+    box-shadow: 0rem 0.04rem 0.04rem 0rem rgba(0, 0, 0, 0.25);
+    position: absolute;
+    top: 49vh;
+    right: 6.9458vw;
+}
+
+.turtleisHere {
+    width: 7.513333333333333vw;
+    height: 7.9921vh;
+    flex-shrink: 0;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    position: absolute;
+    top: 63vh;
+    right: 2vw;
+
+}

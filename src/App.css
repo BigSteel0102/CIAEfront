@@ -1,0 +1,161 @@
+body, html {
+    background-color: #ACDFFF;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-size: 1vw; /* 뷰포트 너비에 따라 전체 텍스트 크기가 조정됨 */
+}
+
+.MainBackground {
+    width: 100vw;
+    height: 100vh;
+}
+
+li {
+    display: inline-block;
+    align-self: center;
+}
+
+nav {
+    width: 19.8958vw;
+    height: 88.0556vh;
+    flex-shrink: 0;
+    border-radius: var(--Corner-Extra-large, 1.4583vw);
+    background: #FFF;
+    box-shadow: 0.7813vw 0.7813vw 0.7813vw 0.0000vw rgba(0, 0, 0, 0.25);
+    position: absolute;
+    left: 5vw;
+    top: 5vh;
+    display: flex;
+    flex-direction: column; /* 세로 방향 정렬 */
+    overflow: hidden;       /* nav 안에 요소가 넘치지 않도록 설정 */
+    z-index: 1;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.navAll {
+    margin-top: 13.89vh;
+    display: flex;
+    flex-direction: column; /* 리스트 아이템들을 세로로 정렬 */
+    align-items: center;    /* 리스트 아이템들이 nav 안에 중앙 정렬 */
+    gap: 2vh;               /* 리스트 아이템 간의 간격 */
+    padding: 0;             /* 기본 패딩 제거 */
+    overflow-y: auto;       /* 세로 스크롤 필요 시 생성 */
+}
+.logo {
+    width: 10.0000vw;
+    height: 10.0000vw;
+    flex-shrink: 0;
+    background:white 20% / cover no-repeat;
+    background-color: transparent;
+    position: absolute;
+    top: -2vh;
+    left: 0.1vw;
+}
+
+.home a, .bookshelf a, .turtle a, .village a{
+    display: flex;
+    width: 14.6875vw;
+    height: 2.5688vw;
+    padding: 0.5208vw;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5208vw;
+    flex-shrink: 0;
+    border-radius: var(--Corner-Full, 52.0833vw);
+    background: #FFF;
+    box-shadow: 0.0000vw 0.2083vw 0.2083vw 0.0000vw rgba(0, 0, 0, 0.25);
+    color: #000;
+    text-align: center;
+    font-family: Inter, sans-serif;
+    font-size: 1.2vw;
+    font-weight: 700;
+    margin-bottom: 2vh;
+}
+
+.learning a {
+    display: flex;
+    width: 14.6875vw;
+    height: 2.5688vw;
+    padding: 0.5208vw;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5208vw;
+    flex-shrink: 0;
+    border-radius: var(--Corner-Full, 52.0833vw);
+    background: #52BDFF;
+    box-shadow: 0.0000vw 0.2083vw 0.2083vw 0.00vw rgba(0, 0, 0, 0.25);
+    color: #000;
+    text-align: center;
+    font-family: Inter, sans-serif;
+    font-size: 1.2vw;
+    font-weight: 700;
+    margin-top: 28.0056vh;
+}
+
+/*Common CSS*/
+
+.menu {
+    width: 64.8958vw;
+    height: 88.0556vh;
+    flex-shrink: 0;
+    border-radius: var(--Corner-Extra-large, 1.4583vw);
+    background: #FFF;
+    box-shadow: 0.7813vw 0.7813vw 0.7813vw 0.0000vw rgba(0, 0, 0, 0.25);
+    position: absolute;
+    right: 9vh;
+    top: 5vh;
+    display: flex;
+}
+
+.CIAELogo {
+    width: 8%;
+    position: absolute;
+    top: 2vh;
+    left: 2vw;
+    z-index: 5;
+}
+
+button {
+    display: flex;
+    width: 25.0083vw;
+    height: 5.8778vh;
+    border-radius: 2rem;
+    border-width: 0;
+    background: #52BDFF;
+    color: #000;
+    text-align: center;
+    font-family: Inter;
+    font-size: 1.3rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 100%; /* 30px */
+    padding-top: 1.8vh;
+    padding-left: 10.2vw;
+}
+
+input {
+    width: 23.0083vw;
+    height: 5.8778vh;
+    flex-shrink: 0;
+    border-radius: 2rem;
+    background: #D9D9D9;
+    border-width: 0;
+    padding-left: 2vw;
+}
+
+input::placeholder {
+    color: #7B7B7B;
+    text-align: left;
+    font-family: Inter;
+    font-size: 1.3rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 100%; /* 30px */
+}

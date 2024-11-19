@@ -1,0 +1,72 @@
+p {
+    margin-left: 4.0rem;
+}
+
+.helloWorld {
+    display: flex;
+    width: 35.3646vw;
+    height: 10vw;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #000;
+    font-family: Inter;
+    font-size: 1.9271vw;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 100%; /* 2.5000vw */
+    z-index: 5vw;
+}
+
+.bookStorage1,
+.bookStorage2 {
+    width: 56vw;
+    height: 17.0833vh;
+    flex-shrink: 0;
+    border-radius: 52.0833vw;
+    background: #EBEBEB;
+    left: 3.0417vw;
+    display: flex; /* flexbox 사용 */
+    flex-wrap: wrap; /* 자식 요소가 자동으로 줄바꿈 */
+    padding: 1rem; /* 여백 추가 */
+    gap: 1rem; /* 요소 간의 간격 */
+}
+
+.bookStorage1 {
+    position: absolute;
+    top: 26.111vh;
+    z-index: 10vw;
+}
+
+.bookStorage2 {
+    position: absolute;
+    top: 55.2777vh;
+    z-index: 10vw;
+}
+
+.booklist {
+    list-style: none;
+    padding: 0;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.booksImg, .yet {
+    width: 9.3229vw;
+    height: 12.1354vw;
+    flex-shrink: 0;
+    margin-left: 3.1vw;
+    margin-top: -9.740vh; /* margin-block을 margin-top으로 변경 */
+    vertical-align: top; /* 추가 */
+}
+
+.booksImg {
+    box-shadow: 0.3125vw 0.3125vw 1.3021vw 0.1042vw rgba(0, 0, 0, 0.25);
+    object-fit: cover;
+}
+
+.yet {
+    background: #C8C8C8;
+    box-shadow: 0.3125vw 0.3125vw 0.7813vw 0.0000vw rgba(0, 0, 0, 0.25);
+    display: inline-block; /* 추가 */
+}
