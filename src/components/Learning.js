@@ -71,12 +71,12 @@ function Reading({ onAITrigger }) {
                 onClick={goToPrevPage}
             />
             <div className='Learning_Book_Left'>
-                <Document file='/토끼와거북이.pdf' className="pdf-document">
+                <Document file='/RabbitAndTurtle.pdf' className="pdf-document">
                     <Page pageNumber={pageNumber} renderTextLayer={false} className="pdf-page"/>
                 </Document>
             </div>
             <div className='Learning_Book_Right'>
-                <Document file='/토끼와거북이.pdf' className="pdf-document">
+                <Document file='/RabbitAndTurtle.pdf' className="pdf-document">
                     <Page pageNumber={pageNumber + 1} renderTextLayer={false} className="pdf-page"/>
                 </Document>
             </div>
@@ -217,7 +217,7 @@ export default function Learning() {
 
     return (
         <div>
-            <Link to='/Home'><img className='CIAELogo' src='/CIAE로고 2.png' alt='CIAE'/></Link>
+            <Link to='/Home'><img className='CIAELogo' src='/CIAE_logo.png' alt='CIAE'/></Link>
             {showAI ? (
                 <Ai />
             ) : (

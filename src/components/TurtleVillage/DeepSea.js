@@ -227,7 +227,10 @@ export default function DeepSea() {
 
     return (
         <div>
-            {gameOver && (
+            <div className='menu'>
+                <p className='pageName'>심해</p>
+                <Link to='/Login'><p className='logOut'>로그아웃</p></Link>
+                {gameOver && (
                 <div className='gameOver' style={{ opacity: gameOverOpacity, transition: 'opacity 1s' }}>
                     <h1 className='OverMent'>게임 오버!</h1>
                     <h3 className='ScoreMent'>점수: {score}</h3>
@@ -238,10 +241,7 @@ export default function DeepSea() {
                         <h1 className='NoLivesLeft'>남은 목숨이 없습니다!</h1>
                     )}
                 </div>
-            )}
-            <div className='menu'>
-                <p className='pageName'>심해</p>
-                <Link to='/Login'><p className='logOut'>로그아웃</p></Link>
+                )}
                 <div className='DeepSea_Background' ref={backgroundRef}>
                     <p className='Score'>점수: {score}</p>
                     <p className='Life'>목숨: {life}</p>

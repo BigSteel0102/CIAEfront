@@ -31,7 +31,7 @@ function Reading() {
     return (
         <>  
             <Link to='/Home'>
-                <img className='CIAELogo' src={process.env.PUBLIC_URL + '/CIAE로고 2.png'} alt='CIAE'/>
+                <img className='CIAELogo' src={process.env.PUBLIC_URL + '/CIAE_logo.png'} alt='CIAE'/>
             </Link>
             <div className='RecommendBar'>
                 <p className='NewBookMent'>다른 책을 읽고 싶다면?</p>

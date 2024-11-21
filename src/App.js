@@ -24,7 +24,7 @@ function List(props) {
 function Logo() {
   return (
     <li>
-      <Link to='/Home'><img className='logo' src='/CIAE로고 2.png' alt='logo' /></Link>
+      <Link to='/Home'><img className='logo' src='/CIAE_logo.png' alt='logo' /></Link>
     </li> 
   );
 }

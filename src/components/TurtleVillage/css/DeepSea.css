@@ -19,14 +19,14 @@
     height: 70.5556vh;
     flex-shrink: 0;
     background: rgba(0,0,0,0.5);
-    position: absolute;
-    right: 7.33vw;
-    bottom: 12.5vh;
     z-index: 1;
     transition: background 1s ease, opacity 1s ease;
     display: flex;
     align-items: center;
     color: white;
+    position: absolute;
+    right: 1.9271vw;
+    bottom: 5.4630vh;
     
 }
 
