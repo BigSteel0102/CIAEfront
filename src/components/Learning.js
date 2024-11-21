@@ -120,8 +120,9 @@ function Ai() {
         await callOpenAI(updatedMessages, (response) => {
             console.log('AI 응답 상태 업데이트 중:', response); // 업데이트 전에 응답 출력
             setAiResponse(response); // AI 응답 상태 설정
-            setMessages([...updatedMessages, { "role": "assistant", "content": response }]);
+            setMessages([...updatedMessages,{ "role": "assistant", "content": response }]);
         });
+        //git feature
 
         setTranscript('');
     };
