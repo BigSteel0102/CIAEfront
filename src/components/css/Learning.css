@@ -1,3 +1,5 @@
+
+
 .Home_Button {
     z-index: 4;
     position: absolute;
@@ -130,7 +132,6 @@
     top: 53.7037vh;
     margin-bottom: 2.1111vh;
 }
-
 
 .pdf-document {
     width: 100%;
@@ -271,3 +272,79 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
 }
 
+.PDFSelector {
+    width: 66.3020vw;
+    height: 61.2037vh;
+    flex-shrink: 0;
+    border-radius: var(--Corner-Full, 1000px);
+    background: #FFF;
+    z-index: 10;
+    position: absolute;
+    top: 19.5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.SelectSizeOfText {
+    color: #000;
+    text-align: center;
+    font-family: Inter;
+    font-size: 1.375rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 100%; /* 30px */
+    position: absolute;
+    top: 5vh;
+}
+
+.verySmall {
+    position: absolute;
+    top: 27vh;
+    left:15vw;
+}
+
+.verySmallRadio {
+
+}
+ 
+.Small {
+    position: absolute;
+    top: 27vh;
+    left: 31.7vw;
+}
+
+.SmallRadio {
+
+}
+
+.Standard {
+    position: absolute;
+    top: 27vh;
+    left: 46.9vw;
+}
+
+.StandardRadio {
+
+}
+
+.Text {
+    color: #000;
+    text-align: center;
+    font-family: Inter;
+    font-size: 1.275rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 100%; /* 1.875rem */
+    position: relative;
+    top: 3.8vh;
+    left: -3.8vw;
+}
+
+[type="radio"],
+input {
+    width: 2.2rem;
+    color: #ACDFFF;
+}
