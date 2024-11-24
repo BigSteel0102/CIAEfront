@@ -305,10 +305,6 @@
     top: 27vh;
     left:15vw;
 }
-
-.verySmallRadio {
-
-}
  
 .Small {
     position: absolute;
@@ -316,18 +312,10 @@
     left: 31.7vw;
 }
 
-.SmallRadio {
-
-}
-
 .Standard {
     position: absolute;
     top: 27vh;
     left: 46.9vw;
-}
-
-.StandardRadio {
-
 }
 
 .Text {
@@ -347,4 +335,11 @@
 input {
     width: 2.2rem;
     color: #ACDFFF;
+}
+
+.End {
+    z-index: 4;
+    position: absolute;
+    top: 50vh;
+    left: 38vw;
 }

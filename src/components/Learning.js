@@ -49,25 +49,9 @@ function PDFSelector({ onPDFSelected }) {
     );
 }
 
-function Reading({ onAITrigger, selectedPDF, triggerPages, pageNumber, setPageNumber }) {
+function Reading({ onAITrigger, selectedPDF, triggerPages, pageNumber, setPageNumber, onEnd }) {
     
     const [numPages, setNumPages] = useState(null);
-
-    useEffect(() => {
-        const fetchNumPages = async () => {
-            try {
-                const response = await fetch(selectedPDF);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const arrayBuffer = await response.arrayBuffer();
-                const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
-                setNumPages(pdf.numPages);
-            } catch (error) {
-                console.error('PDF 정보를 검색하는 중 오류 발생:', error);
-            }
-        };
-
-        fetchNumPages();
-    }, [selectedPDF]);
 
     const goToPrevPage = () => {
         if (pageNumber > 2) setPageNumber(pageNumber - 2);
@@ -80,6 +64,8 @@ function Reading({ onAITrigger, selectedPDF, triggerPages, pageNumber, setPageNu
             if (triggerPages.includes(nextPage)) {
                 onAITrigger(nextPage);
             }
+        } else if (numPages && pageNumber + 2 > numPages) {
+            onEnd();
         }
     };
 
@@ -113,21 +99,19 @@ function Reading({ onAITrigger, selectedPDF, triggerPages, pageNumber, setPageNu
 
 function Ai({ onDone }) {
     const [transcript, setTranscript] = useState('');
-    const [isListening, setIsListening] = useState(false);
-    const [isDone, setIsDone] = useState(false);
-    const [showHomeButton, setShowHomeButton] = useState(false);
-    const [stopCount, setStopCount] = useState(0);
     const [aiResponse, setAiResponse] = useState('');
-    const [showContinue, setShowContinue] = useState(false);
-    const [messages, setMessages] = useState([]);
     const [conversation, setConversation] = useState([]);
+    const [step, setStep] = useState(0);
 
     useEffect(() => {
+        // 첫 번째 질문 요청
         const fetchFirstQuestion = async () => {
             try {
                 const response = await fetch('http://localhost:5000/api/first-question', {
                     method: 'GET',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                 });
 
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -135,26 +119,18 @@ function Ai({ onDone }) {
                 const data = await response.json();
                 setAiResponse(data.question);
             } catch (error) {
-                console.error('첫 번째 질문을 검색하는 중 오류 발생:', error);
+                console.error('첫 번째 질문을 가져오는 중 오류 발생:', error);
             }
         };
 
         fetchFirstQuestion();
     }, []);
 
-    const startListening = () => {
-        setIsListening(true);
-        setShowContinue(false);
-        setIsDone(false);
-    };
-
-    const handleStop = async () => {
-        setIsListening(false);
-        setShowContinue(true);
-        setStopCount(stopCount + 1);
+    const handleSendMessage = async () => {
+        if (transcript.trim() === '') return;
 
         const userMessage = { role: 'user', content: transcript };
-        const updatedMessages = [...messages, userMessage];
+        const updatedConversation = [...conversation, userMessage];
 
         try {
             const response = await fetch('http://localhost:5000/api/chat', {
@@ -164,7 +140,7 @@ function Ai({ onDone }) {
                 },
                 body: JSON.stringify({
                     message: userMessage,
-                    conversation: conversation,
+                    conversation: updatedConversation,
                 }),
             });
 
@@ -175,74 +151,35 @@ function Ai({ onDone }) {
             setConversation(jsonResponse.conversation);
             setAiResponse(jsonResponse.response);
             setTranscript('');
+            setStep(step + 1);
         } catch (error) {
             console.error('Flask API와 통신 중 오류 발생:', error);
         }
     };
 
-    const handleDone = () => {
-        setAiResponse('');
-        setTranscript('');
-        setIsListening(false);
-        setShowContinue(false);
-        setIsDone(true);
-        setShowHomeButton(false);
-        onDone();
-    };
-
-    useEffect(() => {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            alert('이 브라우저는 음성 인식을 지원하지 않습니다.');
-            return;
-        }
-
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'ko-KR';
-        recognition.interimResults = false;
-
-        recognition.onresult = (event) => {
-            const speechToText = event.results[0][0].transcript;
-            setTranscript(speechToText);
-        };
-
-        recognition.onerror = (event) => {
-            console.error('음성 인식 오류:', event.error);
-        };
-
-        if (isListening) recognition.start();
-        else recognition.stop();
-
-        return () => recognition.stop();
-    }, [isListening]);
-
-    if (showHomeButton) {
-        return null;
-    }
-
     return (
-        <div className={`Learning_Container active ${isDone ? 'completed' : ''}`}>
+        <div className={`Learning_Container active`}>
             <div className="LearningWon active">
                 <img src="/Turtle_Right.png" alt="AI_Chat_Bot" className="AI_ChatBot_Image" />
                 <img src="/UserProfile.png" alt="AI_Chat_User3" className="AI_Chat_User_Image" />
-                {!isListening && !showContinue && (
-                    <img src="/AnswerStart.png" alt="Start" className="AnswerStart" onClick={startListening} />
-                )}
-                {isListening && (
-                    <img src="/Stop.png" alt="Stop" className="AnswerStart" onClick={handleStop} />
-                )}
-                {showContinue && (
-                    <img src="/ContinueStart.png" alt="continue" className="Continue" onClick={() => { setShowContinue(false); startListening(); }} />
-                )}
-                {stopCount >= 2 && (
-                    <img src="/Done.png" onClick={handleDone} className="Done" alt="Done" />
-                )}
-                <div className="AI_Question">
-                    <h3>{aiResponse}</h3>
+                <div className="chat-container">
+                    <div className="AI_Question">
+                        <h3>{aiResponse}</h3>
+                    </div>
+                    <div className="chat-input">
+                        <input
+                            type="text"
+                            value={transcript}
+                            onChange={(e) => setTranscript(e.target.value)}
+                            placeholder="메시지를 입력하세요..."
+                            className="chat-input-box"
+                        />
+                        <button onClick={handleSendMessage} className="send-button">전송</button>
+                    </div>
                 </div>
-                <div className="User">
-                    <p>{transcript}</p>
-                </div>
+                {step >= 2 && (
+                    <button onClick={onDone} className="Done">끝내기</button>
+                )}
             </div>
         </div>
     );
@@ -253,6 +190,7 @@ export default function Learning() {
     const [showAI, setShowAI] = useState(false);
     const [selectedPDF, setSelectedPDF] = useState(false);
     const [triggerPages, setTriggerPages] = useState([]);
+    const [showEndMessage, setShowEndMessage] = useState(false);
     
     const handleAITrigger = (pageNumber) => {
         if (triggerPages.includes(pageNumber)) {
@@ -269,6 +207,10 @@ export default function Learning() {
         setTriggerPages(pages);
     };
 
+    const handleEnd = () => {
+        setShowEndMessage(true);
+    };
+
     return (
         <div>
             <Link to="/Home"><img className="CIAELogo" src="/CIAE_logo.png" alt="CIAE" /></Link>
@@ -276,8 +218,15 @@ export default function Learning() {
                 <PDFSelector onPDFSelected={handlePDFSelected} />
             ) : showAI ? (
                 <Ai onDone={handleAIDone} />
+            ) : showEndMessage ? (
+                <div className="LearningWon active">
+                    <h1 className='End'>끝!</h1>
+                    <Link to="/Home">
+                        <button className="Home_Button">Home</button>
+                    </Link>
+                </div>
             ) : (
-                <Reading onAITrigger={handleAITrigger} selectedPDF={selectedPDF} triggerPages={triggerPages} pageNumber={pageNumber} setPageNumber={setPageNumber} />
+                <Reading onAITrigger={handleAITrigger} selectedPDF={selectedPDF} triggerPages={triggerPages} pageNumber={pageNumber} setPageNumber={setPageNumber} onEnd={handleEnd} />
             )}
         </div>
     );
