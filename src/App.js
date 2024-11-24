@@ -11,7 +11,11 @@ import Space from './components/TurtleVillage/Space';
 import Sky from './components/TurtleVillage/Sky';
 import Forest from './components/TurtleVillage/Forest';
 import Recommend from './components/Recommend';
-import Login from './components/Login';
+import Login from './components/login';
+import ProtectedRoute from './components/auth/privateroute';
+import AuthProvider from './components/auth/authprovider';
+import { AuthContext } from './components/auth/authprovider';
+
 
 function List(props) {
   return (
@@ -31,10 +35,11 @@ function Logo() {
 
 function App() {
   const location = useLocation();
+  const { user } = useContext(AuthContext);
   
   const hideBackgroundPaths = [];
   const hideNavPaths = ['/Learning', '/Recommend', '/login'];
-  const showNav = !hideNavPaths.includes(location.pathname);
+  const showNav = user && !hideNavPaths.includes(location.pathname);
   const showBackground = !hideBackgroundPaths.includes(location.pathname);
 
   return (
@@ -64,17 +69,59 @@ function App() {
       {/* 페이지별 라우팅 설정 */}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/Home" element={<Home />} />
-        <Route path="/Bookshelf" element={<Bookshelf />} />
-        <Route path="/Turtle" element={<Turtle />} />
-        <Route path="/Village" element={<Village />} />
-        <Route path="/Learning" element={<Learning />} />
-        <Route path="/DeepSea" element={<DeepSea />} />
-        <Route path="/Space" element={<Space />} />
-        <Route path="/Sky" element={<Sky />} />
-        <Route path="/Forest" element={<Forest />} />
-        <Route path="/Recommend" element={<Recommend />} />
-        <Route path='/Login' element={<Login />} />
+        <Route path="/Login" element={
+          user ? <Navigate to="/Home" /> : <Login />
+        } />
+        <Route path="/Home" element={
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        } />
+        <Route path="/Bookshelf" element={
+          <ProtectedRoute>
+            <Bookshelf />
+          </ProtectedRoute>
+        } />
+        <Route path="/Turtle" element={
+          <ProtectedRoute>
+            <Turtle />
+          </ProtectedRoute>
+        } />
+        <Route path="/Village" element={
+          <ProtectedRoute>
+            <Village />
+          </ProtectedRoute>
+        } />
+        <Route path="/Learning" element={
+          <ProtectedRoute>
+            <Learning />
+          </ProtectedRoute>
+        } />
+        <Route path="/DeepSea" element={
+          <ProtectedRoute>
+            <DeepSea />
+          </ProtectedRoute>
+        } />
+        <Route path="/Space" element={
+          <ProtectedRoute>
+            <Space />
+          </ProtectedRoute>
+        } />
+        <Route path="/Sky" element={
+          <ProtectedRoute>
+            <Sky />
+          </ProtectedRoute>
+        } />
+        <Route path="/Forest" element={
+          <ProtectedRoute>
+            <Forest />
+          </ProtectedRoute>
+        } />
+        <Route path="/Recommend" element={
+          <ProtectedRoute>
+            <Recommend />
+          </ProtectedRoute>
+        } />
       </Routes>
     </div>
   );
@@ -83,8 +130,10 @@ function App() {
 
 export default function AppWrapper() {
   return (
+    <AuthProvider>
       <Router>
         <App />
       </Router>
+    </AuthProvider>
   );
 }

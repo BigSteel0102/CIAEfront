@@ -1,12 +1,11 @@
-import './css/Login.css';
-import React, { useState } from 'react';
-import axios from 'axios';
-import { Link } from 'react-router-dom';
+import './css/login.css';
+import React, { useState, useContext, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from './/auth/authprovider';
 
 // Form Component
 function Form(props) {
   return (
-    <form>
       <input 
         className={props.type}
         type={props.type} 
@@ -15,7 +14,6 @@ function Form(props) {
         placeholder={props.label}
         onChange={props.onChange}
       />
-    </form>
   );
 }
 
@@ -32,24 +30,30 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const { login, user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/Home')
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage('');
 
     try {
-      const response = await axios.post('https://your-backend-url.com/api/login', {
-        email,
-        password,
-      });
-
-      console.log('login successful!', response.data);
-      localStorage.setItem('token', response.data.token);
-
-      alert('login succeed!');
+      await login({ email, password });
+      navigate('/Home');
     } catch (error) {
-      console.error('login failed:', error);
-      setErrorMessage('비밀번호 혹은 아이디가 일치하지 않습니다.');
+      if (error.response) {
+        setErrorMessage(error.response.data.message || '잘못된 이메일 또는 비밀번호');
+      } else if (error.request) {
+        setErrorMessage('네트워크 오류');
+      } else {
+        setErrorMessage('unknown error');
+      }
     }
   };
 
@@ -58,21 +62,23 @@ export default function Login() {
       <Link to='/Home'><img className='CIAELogo' src='/CIAE_logo.png' alt='CIAE'/></Link>
       <div className='won'></div>
       <div className='Logi'>
-        <Form
-          type='email' 
-          name='email'
-          label='닉네임'
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <Form
-          type='password' 
-          name='password'
-          label='비밀번호'
-          value={password}
-          onChange={(e) => setPassword(e.target.value)} 
-        />       
-        <Button name='로그인' onClick={handleSubmit} />
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <input
+            type='email' 
+            name='email'
+            label='닉네임'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type='password' 
+            name='password'
+            label='비밀번호'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)} 
+          />       
+          <button type="submit" className="button">로그인</button>
+        </form>
         <p className='ifNoAccount'>아직 계정이 없다면?</p>
         <p className='Join'>회원가입</p>
       </div>
