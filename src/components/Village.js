@@ -1,5 +1,6 @@
 import './css/Village.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function CustomDropdown({ options, selectedOption, onOptionSelect }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -44,15 +45,20 @@ export default function Village() {
     const [hasLiked, setHasLiked] = useState(false);
     const [likeCount, setLikeCount] = useState(0);
     const [selectedBoard, setSelectedBoard] = useState('자유게시판'); 
-    const [posts, setPosts] = useState({
-        자유게시판: [
-            { title: '공부하기 너무 싫어요 ㅠㅠㅠㅠㅠㅠ', content: '요즘 집중이 너무 안돼서 공부를 할수 없어요 ㅜㅜ' }
-        ],
-        정보게시판: [
-            {title: '병원 추천좀', content: '저 진짜 이제 병원 안가면 안될것 같아요... 성북구 병원 추천 좀 해 주세요 ㅠㅠ', replies: ['00병원 좋아요! 원장님도 친절하시고...']}
-        ],
-        고민게시판: [{ title: '학교에서 힘든 일이 있었어요.ㅜㅜ', content: '국어 수업 시간에 선생님께서 소리내어 책을 읽어보라고 하셨는데 글을 집중해서 못 읽어서 친구들에게 창피를 당했어요 ㅠㅠ', replies: ['정말 고생 많았겠다 ㅠㅠ'] }]
-    });
+    const [posts, setPosts] = useState([]);
+
+    useEffect(() => {
+        fetchThreads();
+    }, []);
+
+    const fetchThreads = async () => {
+        try {
+            const response = await axios.get('https://flask-app-878850522333/api/community/threads');
+            setPosts(response.data);
+        } catch (error) {
+            console.error('Error fetching threads:', error);
+        }
+    };
 
     const handleBoardChange = (newBoard) => {
         setCurrentBoard(newBoard);
@@ -71,48 +77,51 @@ export default function Village() {
         setMode('post');
     };
 
-    const handlePostSubmit = () => {
+    const handlePostSubmit = async () => {
         if (title && content) {
-            setPosts((prevPosts) => ({
-                ...prevPosts,
-                [selectedBoard]: [{ title, content, replies: [] }, ...prevPosts[selectedBoard]], // 새 게시물을 앞에 추가
-            }));
-            setCurrentBoard(selectedBoard);
-            setMode('view');
-            setTitle('');
-            setContent('');
+            try {
+                await axios.post(`https://flask-app-878850522333/api/community/threads/${selectedBoard}/posts`, {
+                    title,
+                    content,
+                });
+                fetchThreads();
+                setMode('view');
+                setTitle('');
+                setContent('');
+            } catch (error) {
+                console.error('Error posting:', error);
+            }
         } else {
             alert('제목과 내용을 모두 입력해주세요.');
         }
     };
 
-    const handleListItemClick = (post) => {
-        setSelectedPost(post);
-        setMode('detail');
+    const handleListItemClick = async (postId) => {
+        try {
+            const response = await axios.get(`https://flask-app-878850522333/api/community/posts/${postId}/comments`);
+            setSelectedPost({ ...posts.find(post => post.id === postId), replies: response.data });
+            setMode('detail');
+        } catch (error) {
+            console.error('Error fetching post details:', error);
+        }
     };
 
     const handleReplyChange = (event) => {
         setReplies(event.target.value);
     };
 
-    const handleReplySubmit = () => {
+    const handleReplySubmit = async () => {
         if (replies) {
-            setSelectedPost((prevSelectedPost) => ({
-                ...prevSelectedPost,
-                replies: [...(prevSelectedPost.replies || []), replies],
-            }));
-    
-            setPosts((prevPosts) => ({
-                ...prevPosts,
-                [currentBoard]: prevPosts[currentBoard].map((post) =>
-                    post === selectedPost
-                        ? { ...post, replies: [...(post.replies || []), replies] }
-                        : post
-                ),
-            }));
-    
-            setReplies('');
-            setShowReplyInput(false);
+            try {
+                await axios.post(`https://flask-app-878850522333/api/community/posts/${selectedPost.id}/comments`, {
+                    content: replies,
+                });
+                setReplies('');
+                fetchThreads();
+                setShowReplyInput(false);
+            } catch (error) {
+                console.error('Error submitting reply:', error);
+            }
         }
     };
 
@@ -127,10 +136,27 @@ export default function Village() {
         }
     };
 
+    const handleDeletePost = async (postId) => {
+        try {
+            await axios.delete(`https://flask-app-878850522333/api/community/posts/${postId}`);
+            fetchThreads();
+        } catch (error) {
+            console.error('Error deleting post:', error);
+        }
+    };
+
+    const handleDeleteComment = async (commentId) => {
+        try {
+            await axios.delete(`https://flask-app-878850522333/api/community/comments/${commentId}`);
+            fetchThreads();
+        } catch (error) {
+            console.error('Error deleting comment:', error);
+        }
+    };
+
     return (
         <div className='menu'>
             <p className='pageName'>거북이 마을</p>
-            <p className='logOut'>로그아웃</p>
 
             <p className={`FreeBoard ${currentBoard === '자유게시판' ? 'selected' : ''}`}
                 onClick={() => handleBoardChange('자유게시판')}>자유게시판</p>
@@ -158,11 +184,11 @@ export default function Village() {
                         </div>
                         <div className='contentBorder' />
                         <ul>
-                            {posts[currentBoard].map((post, index) => (
+                            {posts.map((post, index) => (
                                 <div
                                     className='userList'
                                     key={index}
-                                    onClick={() => handleListItemClick(post)}
+                                    onClick={() => handleListItemClick(post.id)}
                                 >
                                     <img className='mainAvatar' src='/58.png' alt='avatar'></img>
                                     <p className='titleOfContent'>{post.title}</p>
@@ -242,9 +268,11 @@ export default function Village() {
                                 <li key={index} className='replyItem'>
                                     <img className='ReplyAvatar' src='/58.png' alt='avatar'></img>
                                     <p className='ReplyText'>{reply}</p>
+                                    <button onClick={() => handleDeleteComment(reply.id)}>Delete</button>
                                 </li>
                             ))}
                         </div>
+                        <button onClick={() => handleDeletePost(selectedPost.id)}>Delete Post</button>
                     </div>
                 )}
             </div>

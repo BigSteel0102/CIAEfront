@@ -3,8 +3,33 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import axios from 'axios';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `${process.env.PUBLIC_URL}/pdf.worker.mjs`;
+
+async function callOpenAI(messages, setAiResponse) {
+    try {
+        const response = await axios.post('http://127.0.0.1:5000/api/getAIResponse', {
+            messages: messages
+        });
+
+        const newMessage = response.data.content;
+        setAiResponse(newMessage);
+    } catch (error) {
+        console.error('Error calling backend API:', error);
+        setAiResponse('API 호출 중 오류가 발생했습니다.');
+    }
+}
+
+async function saveConversationToDB(messages) {
+    try {
+        await axios.post('http://127.0.0.1:5000/api/saveConversation', {
+            messages: messages
+        });
+    } catch (error) {
+        console.error('Error saving conversation to DB:', error);
+    }
+}
 
 function Button({ name, src, alt, onClick }) {
     return <img src={src} className={name} alt={alt} onClick={onClick} />;
@@ -25,6 +50,8 @@ function PDFSelector({ onPDFSelected }) {
                 case '/Standard.pdf':
                     triggerPages = [7, 8];
                     break;
+                default:
+                    triggerPages = [];
             }
             onPDFSelected(pdfUrl, triggerPages);
         }
@@ -37,7 +64,7 @@ function PDFSelector({ onPDFSelected }) {
                 <input className='verySmallRadio' type="radio" id='verySmall' name='Text' value='/verySmall.pdf' onChange={handleRadioSelect} />
                 <label className='Text' htmlFor='verySmall'>아주 적게</label>
             </div>
-            <div className='Small'> 
+            <div className='Small'>
                 <input className='SmallRadio' type="radio" id='Small' name='Text' value='/Small.pdf' onChange={handleRadioSelect} />
                 <label className='Text' htmlFor='Small'>약간 적게</label>
             </div>
@@ -49,24 +76,98 @@ function PDFSelector({ onPDFSelected }) {
     );
 }
 
+function Ai({ onDone }) {
+    const [InitQuestion, setInitQuestion] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const [transcript, setTranscript] = useState('');
+    const [aiResponse, setAiResponse] = useState(InitQuestion);
+    const [isDone, setIsDone] = useState(false);
+    const [stopCount, setStopCount] = useState(0);
+
+    useEffect(() => {
+    axios
+        .get("http://127.0.0.1:5000/api/InitQuestion")
+        .then((response) => {
+            setInitQuestion(response.data);
+            setAiResponse(response.data);
+            setMessages([{ "role": "system", "content": response.data }]);
+        })
+        .catch((error) => console.error("Error fetching data:", error));
+}, []);
+
+    const handleUserInput = () => {
+        setStopCount(stopCount + 1);
+
+        const userMessage = { "role": "user", "content": transcript };
+        const updatedMessages = [...messages, userMessage];
+
+        callOpenAI(updatedMessages, (response) => {
+            setAiResponse(response);
+            setMessages([...updatedMessages, { "role": "assistant", "content": response }]);
+        });
+
+        setTranscript('');
+    };
+
+    const handleDone = () => {
+        setAiResponse('');
+        setTranscript('');
+        setIsDone(false);
+        saveConversationToDB(messages);
+        onDone();
+    };
+
+    return (
+        <div className={`Learning_Container active ${isDone ? 'completed' : ''}`}>
+            <div className='LearningWon active'>
+                <img src='/Teacher.png' alt='AI_Chat_Bot' className='AI_ChatBot_Image'/>
+                <img src='/UserProfile.png' alt='AI_Chat_User3' className='AI_Chat_User_Image'/>
+                <div className='chat-input'>
+                    <input
+                        type='text'
+                        value={transcript}
+                        onChange={(e) => setTranscript(e.target.value)}
+                        placeholder='답변을 입력하세요...'
+                        className='chatinput'
+                    />
+                    <img src='/send.png' className='send-button' onClick={handleUserInput} ></img>
+                </div>
+                {stopCount >= 2 && (
+                    <img src='/Done.png' onClick={handleDone} className='Done'/>
+                )}
+                <div className='AI_Question'>
+                    <h3>{aiResponse}</h3>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 function Reading({ onAITrigger, selectedPDF, triggerPages, pageNumber, setPageNumber, onEnd }) {
-    
     const [numPages, setNumPages] = useState(null);
 
+    const onDocumentLoadSuccess = ({ numPages }) => {
+        setNumPages(numPages);
+    };
+
     const goToPrevPage = () => {
-        if (pageNumber > 2) setPageNumber(pageNumber - 2);
+        setPageNumber((prevPageNumber) => (prevPageNumber > 2 ? prevPageNumber - 2 : prevPageNumber));
     };
 
     const goToNextPage = () => {
-        if (numPages && pageNumber + 2 <= numPages) {
-            const nextPage = pageNumber + 2;
-            setPageNumber(nextPage);
-            if (triggerPages.includes(nextPage)) {
-                onAITrigger(nextPage);
+        setPageNumber((prevPageNumber) => {
+            const nextPage = prevPageNumber + 2;
+            if (numPages && nextPage <= numPages) {
+                if (triggerPages.includes(nextPage)) {
+                    onAITrigger(nextPage);
+                }
+                return nextPage;
+            } else if (numPages && nextPage > numPages) {
+                onEnd();
+                return prevPageNumber;
             }
-        } else if (numPages && pageNumber + 2 > numPages) {
-            onEnd();
-        }
+            return prevPageNumber;
+        });
     };
 
     return (
@@ -78,12 +179,20 @@ function Reading({ onAITrigger, selectedPDF, triggerPages, pageNumber, setPageNu
                 onClick={goToPrevPage}
             />
             <div className="Learning_Book_Left">
-                <Document file={selectedPDF} className="pdf-document">
+                <Document
+                    file={selectedPDF}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                    className="pdf-document"
+                >
                     <Page pageNumber={pageNumber} renderTextLayer={false} className="pdf-page" />
                 </Document>
             </div>
             <div className="Learning_Book_Right">
-                <Document file={selectedPDF} className="pdf-document">
+                <Document
+                    file={selectedPDF}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                    className="pdf-document"
+                >
                     <Page pageNumber={pageNumber + 1} renderTextLayer={false} className="pdf-page" />
                 </Document>
             </div>
@@ -94,94 +203,6 @@ function Reading({ onAITrigger, selectedPDF, triggerPages, pageNumber, setPageNu
                 onClick={goToNextPage}
             />
         </>
-    );
-}
-
-function Ai({ onDone }) {
-    const [transcript, setTranscript] = useState('');
-    const [aiResponse, setAiResponse] = useState('');
-    const [conversation, setConversation] = useState([]);
-    const [step, setStep] = useState(0);
-
-    useEffect(() => {
-        // 첫 번째 질문 요청
-        const fetchFirstQuestion = async () => {
-            try {
-                const response = await fetch('http://localhost:5000/api/first-question', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-                const data = await response.json();
-                setAiResponse(data.question);
-            } catch (error) {
-                console.error('첫 번째 질문을 가져오는 중 오류 발생:', error);
-            }
-        };
-
-        fetchFirstQuestion();
-    }, []);
-
-    const handleSendMessage = async () => {
-        if (transcript.trim() === '') return;
-
-        const userMessage = { role: 'user', content: transcript };
-        const updatedConversation = [...conversation, userMessage];
-
-        try {
-            const response = await fetch('http://localhost:5000/api/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    message: userMessage,
-                    conversation: updatedConversation,
-                }),
-            });
-
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-            const jsonResponse = await response.json();
-
-            setConversation(jsonResponse.conversation);
-            setAiResponse(jsonResponse.response);
-            setTranscript('');
-            setStep(step + 1);
-        } catch (error) {
-            console.error('Flask API와 통신 중 오류 발생:', error);
-        }
-    };
-
-    return (
-        <div className={`Learning_Container active`}>
-            <div className="LearningWon active">
-                <img src="/Turtle_Right.png" alt="AI_Chat_Bot" className="AI_ChatBot_Image" />
-                <img src="/UserProfile.png" alt="AI_Chat_User3" className="AI_Chat_User_Image" />
-                <div className="chat-container">
-                    <div className="AI_Question">
-                        <h3>{aiResponse}</h3>
-                    </div>
-                    <div className="chat-input">
-                        <input
-                            type="text"
-                            value={transcript}
-                            onChange={(e) => setTranscript(e.target.value)}
-                            placeholder="메시지를 입력하세요..."
-                            className="chat-input-box"
-                        />
-                        <button onClick={handleSendMessage} className="send-button">전송</button>
-                    </div>
-                </div>
-                {step >= 2 && (
-                    <button onClick={onDone} className="Done">끝내기</button>
-                )}
-            </div>
-        </div>
     );
 }
 

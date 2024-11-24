@@ -20,25 +20,11 @@ export default function Bookshelf() {
     <div>
       <div className="menu">
         <p className="pageName">내 서재</p>
-        <p className="logOut">로그아웃</p>
         <ul className="bookStorage1">
-
-            <Books
-              src="/cover1.png"
-              href="/Learning"
-            />
-          <Books
-            src="/cover2.png"
-            href="/Learning" 
-            />
-          <Books
-            src="/cover3.png"
-            href="/Learning"
-            />
-          <Books
-            src="/cover4.png"
-            href="/Learning"
-            />
+          <Yet />
+          <Yet />
+          <Yet />
+          <Yet />
         </ul>
         <ul className="bookStorage2">
           <Yet />

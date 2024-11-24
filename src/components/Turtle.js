@@ -28,7 +28,6 @@ export default function Turtle() {
         <div>
             <div className='menu'>
                 <p className='pageName'>거북이 수족관</p>
-                <p className='logOut'>로그아웃</p>
                 <div className='Turtle_Background'>
                     <img src='/Road.png' className='Road' alt='SeaRoad' />
 

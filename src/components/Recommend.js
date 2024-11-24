@@ -12,9 +12,9 @@ function Button({ name, src, alt, onClick }) {
 function Reading() {
     const [mainBookSrc, setMainBookSrc] = useState(process.env.PUBLIC_URL + '/cover1.png'); // MainBook 이미지 경로
     const [recommendBooks, setRecommendBooks] = useState([
-        process.env.PUBLIC_URL + '/cover2.png',
-        process.env.PUBLIC_URL + '/cover3.png',
-        process.env.PUBLIC_URL + '/cover4.png'
+        process.env.PUBLIC_URL + '/cover1.png',
+        process.env.PUBLIC_URL + '/cover1.png',
+        process.env.PUBLIC_URL + '/cover1.png'
     ]);
 
     // 추천 책을 클릭할 때 이미지를 교체하는 함수

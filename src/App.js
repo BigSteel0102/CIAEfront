@@ -1,6 +1,6 @@
 import './App.css';
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import Turtle from './components/Turtle';
 import Learning from './components/Learning';
 import Bookshelf from './components/Bookshelf';
@@ -11,7 +11,7 @@ import Space from './components/TurtleVillage/Space';
 import Sky from './components/TurtleVillage/Sky';
 import Forest from './components/TurtleVillage/Forest';
 import Recommend from './components/Recommend';
-
+import Login from './components/Login';
 
 function List(props) {
   return (
@@ -33,32 +33,34 @@ function App() {
   const location = useLocation();
   
   const hideBackgroundPaths = [];
-  const hideNavPaths = ['/Learning', '/Recommend'];
+  const hideNavPaths = ['/Learning', '/Recommend', '/login'];
   const showNav = !hideNavPaths.includes(location.pathname);
   const showBackground = !hideBackgroundPaths.includes(location.pathname);
+
   return (
     <div>
       {showBackground && (
         <div className='Main'>
-          <img src='/MainBackground.png' className='MainBackground' alt='MainBackground'/>
+          <img src='/MainBackground.png' className='MainBackground' alt='MainBackground' />
           {showNav && (
-          <>
-          <audio autoPlay loop>
-            <source src="/The Center Isn't Holding - National Sweetheart.mp3" type="audio/mpeg" />
-          </audio>
-          <nav>
-            <ul className='navAll'>
-              <Logo />
-              <List route='/Bookshelf' name='내 서재' thing='bookshelf' />
-              <List route='/Turtle' name='거북이 미니게임' thing='turtle' />
-              <List route='/Village' name='거북이 마을' thing='village' />
-              <List route='/Recommend' name='독서 시작하기' thing='learning' />
-            </ul>
-          </nav>
-        </> 
-      )}
+            <>
+              <audio autoPlay loop>
+                <source src="/The Center Isn't Holding - National Sweetheart.mp3" type="audio/mpeg" />
+              </audio>
+              <nav>
+                <ul className='navAll'>
+                  <Logo />
+                  <List route='/Bookshelf' name='내 서재' thing='bookshelf' />
+                  <List route='/Turtle' name='거북이 미니게임' thing='turtle' />
+                  <List route='/Village' name='거북이 마을' thing='village' />
+                  <List route='/Recommend' name='독서 시작하기' thing='learning' />
+                </ul>
+              </nav>
+            </>
+          )}
         </div>
       )}
+
       {/* 페이지별 라우팅 설정 */}
       <Routes>
         <Route path="/" element={<Home />} />
@@ -72,15 +74,17 @@ function App() {
         <Route path="/Sky" element={<Sky />} />
         <Route path="/Forest" element={<Forest />} />
         <Route path="/Recommend" element={<Recommend />} />
+        <Route path='/Login' element={<Login />} />
       </Routes>
     </div>
-);
+  );
 }
 
+
 export default function AppWrapper() {
-return (
-  <Router>
-    <App />
-  </Router>
-);
+  return (
+      <Router>
+        <App />
+      </Router>
+  );
 }
