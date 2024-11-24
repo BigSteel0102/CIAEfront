@@ -1,228 +1,232 @@
 import './css/Learning.css';
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import { Link } from 'react-router-dom'; 
 
-async function callOpenAI(messages, setAiResponse) {
-    const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
-    const url = 'https://api.openai.com/v1/chat/completions';
-
-    const data = {
-        model: "gpt-4o",
-        messages: messages,
-        max_tokens: 3000,
-        temperature: 0.6,
-        stream: false
-    };
-
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-        const jsonResponse = await response.json();
-        const newMessage = jsonResponse.choices[0].message.content;
-        
-        console.log('OpenAI 응답:', newMessage); // 응답 내용 확인
-
-        setAiResponse(newMessage); // AI 응답 상태 업데이트
-    } catch (error) {
-        console.error('Error calling OpenAI API:', error);
-        setAiResponse('API 호출 중 오류가 발생했습니다.');
-    }
-}
-
-pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
+pdfjs.GlobalWorkerOptions.workerSrc = `${process.env.PUBLIC_URL}/pdf.worker.mjs`;
 
 function Button({ name, src, alt, onClick }) {
     return <img src={src} className={name} alt={alt} onClick={onClick} />;
 }
 
-function Reading({ onAITrigger }) {
-    const [pageNumber, setPageNumber] = useState(1);
-    const numPages = 9;
+function PDFSelector({ onPDFSelected }) {
+    const handleRadioSelect = (event) => {
+        const pdfUrl = event.target.value;
+        if (pdfUrl) {
+            let triggerPages;
+            switch (pdfUrl) {
+                case '/verySmall.pdf':
+                    triggerPages = [43, 69];
+                    break;
+                case '/Small.pdf':
+                    triggerPages = [11, 19];
+                    break;
+                case '/Standard.pdf':
+                    triggerPages = [7, 8];
+                    break;
+            }
+            onPDFSelected(pdfUrl, triggerPages);
+        }
+    };
+
+    return (
+        <div className="PDFSelector active">
+            <h1 className='SelectSizeOfText'>글자수 조절</h1>
+            <div className='verySmall'>
+                <input className='verySmallRadio' type="radio" id='verySmall' name='Text' value='/verySmall.pdf' onChange={handleRadioSelect} />
+                <label className='Text' htmlFor='verySmall'>아주 적게</label>
+            </div>
+            <div className='Small'> 
+                <input className='SmallRadio' type="radio" id='Small' name='Text' value='/Small.pdf' onChange={handleRadioSelect} />
+                <label className='Text' htmlFor='Small'>약간 적게</label>
+            </div>
+            <div className='Standard'>
+                <input className='StandardRadio' type="radio" id='Standard' name='Text' value='/Standard.pdf' onChange={handleRadioSelect} />
+                <label className='Text' htmlFor='Standard'>&nbsp; &nbsp;기본</label>
+            </div>
+        </div>
+    );
+}
+
+function Reading({ onAITrigger, selectedPDF, triggerPages, pageNumber, setPageNumber, onEnd }) {
+    
+    const [numPages, setNumPages] = useState(null);
 
     const goToPrevPage = () => {
         if (pageNumber > 2) setPageNumber(pageNumber - 2);
     };
 
     const goToNextPage = () => {
-        if (pageNumber + 1 < numPages) {
-            setPageNumber(pageNumber + 2);
-        } else {
-            onAITrigger();
+        if (numPages && pageNumber + 2 <= numPages) {
+            const nextPage = pageNumber + 2;
+            setPageNumber(nextPage);
+            if (triggerPages.includes(nextPage)) {
+                onAITrigger(nextPage);
+            }
+        } else if (numPages && pageNumber + 2 > numPages) {
+            onEnd();
         }
     };
 
     return (
         <>
             <Button
-                name='Learning_Button_Left'
-                src='/Left.png'
-                alt="Left navigation button"
+                name="Learning_Button_Left"
+                src="/Left.png"
+                alt="왼쪽 네비게이션 버튼"
                 onClick={goToPrevPage}
             />
-            <div className='Learning_Book_Left'>
-                <Document file='/RabbitAndTurtle.pdf' className="pdf-document">
-                    <Page pageNumber={pageNumber} renderTextLayer={false} className="pdf-page"/>
+            <div className="Learning_Book_Left">
+                <Document file={selectedPDF} className="pdf-document">
+                    <Page pageNumber={pageNumber} renderTextLayer={false} className="pdf-page" />
                 </Document>
             </div>
-            <div className='Learning_Book_Right'>
-                <Document file='/RabbitAndTurtle.pdf' className="pdf-document">
-                    <Page pageNumber={pageNumber + 1} renderTextLayer={false} className="pdf-page"/>
+            <div className="Learning_Book_Right">
+                <Document file={selectedPDF} className="pdf-document">
+                    <Page pageNumber={pageNumber + 1} renderTextLayer={false} className="pdf-page" />
                 </Document>
             </div>
             <Button
-                name='Learning_Button_Right'
-                src='/Right.png'
-                alt="Right navigation button"
+                name="Learning_Button_Right"
+                src="/Right.png"
+                alt="오른쪽 네비게이션 버튼"
                 onClick={goToNextPage}
             />
         </>
     );
 }
 
-function Ai() {
-    const [messages, setMessages] = useState([
-        { "role": "system", "content": 'Adopt a conversational tone and provide empathetic responses to connect deeply with the user\'s emotions. ...' },
-        { "role": "assistant", "content": '안녕! 만나서 반가워. 😋 오늘 "토끼와 거북이"에 대해 얘기해볼까 해. 이 이야기 속에서 토끼는 처음에 자신감이 넘치지만, 결국엔 방심해서 경주에서 지게 되잖아. 토끼가 그 순간 느꼈을 좌절감이나 실망감을 생각해보면, 너도 비슷한 감정을 느껴본 적 있어? 어떤 상황 이었는지 나눠줄 수 있어?' }
-    ]);
+function Ai({ onDone }) {
     const [transcript, setTranscript] = useState('');
-    const [isListening, setIsListening] = useState(false);
-    const [aiResponse, setAiResponse] = useState('안녕! 만나서 반가워. 😋 오늘 "토끼와 거북이"에 대해 얘기해볼까 해. 이 이야기 속에서 토끼는 처음에 자신감이 넘치지만, 결국엔 방심해서 경주에서 지게 되잖아. 토끼가 그 순간 느꼈을 좌절감이나 실망감을 생각해보면, 너도 비슷한 감정을 느껴본 적 있어? 어떤 상황 이었는지 나눠줄 수 있어?');
-    const [showContinue, setShowContinue] = useState(false);
-    const [isDone, setIsDone] = useState(false);
-    const [showHomeButton, setShowHomeButton] = useState(false);
-    const [stopCount, setStopCount] = useState(0);
-
-    const startListening = () => {
-        setIsListening(true);
-        setShowContinue(false);
-        setIsDone(false);
-    };
-
-    const handleStop = async () => {
-        setIsListening(false);
-        setShowContinue(true);
-        setStopCount(stopCount + 1);
-
-        const userMessage = { "role": "user", "content": transcript };
-        const updatedMessages = [...messages, userMessage];
-
-        await callOpenAI(updatedMessages, (response) => {
-            console.log('AI 응답 상태 업데이트 중:', response); // 업데이트 전에 응답 출력
-            setAiResponse(response); // AI 응답 상태 설정
-            setMessages([...updatedMessages,{ "role": "assistant", "content": response }]);
-        });
-        //git feature
-
-        setTranscript('');
-    };
-
-    const handleDone = () => {
-        setAiResponse('');
-        setTranscript('');
-        setIsListening(false);
-        setShowContinue(false);
-        setIsDone(true);
-        setShowHomeButton(true);
-    };
+    const [aiResponse, setAiResponse] = useState('');
+    const [conversation, setConversation] = useState([]);
+    const [step, setStep] = useState(0);
 
     useEffect(() => {
-        console.log('현재 aiResponse 상태:', aiResponse); // 상태 업데이트 확인
-    }, [aiResponse]);
+        // 첫 번째 질문 요청
+        const fetchFirstQuestion = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/first-question', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-    useEffect(() => {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            alert('이 브라우저는 음성 인식을 지원하지 않습니다.');
-            return;
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const data = await response.json();
+                setAiResponse(data.question);
+            } catch (error) {
+                console.error('첫 번째 질문을 가져오는 중 오류 발생:', error);
+            }
+        };
+
+        fetchFirstQuestion();
+    }, []);
+
+    const handleSendMessage = async () => {
+        if (transcript.trim() === '') return;
+
+        const userMessage = { role: 'user', content: transcript };
+        const updatedConversation = [...conversation, userMessage];
+
+        try {
+            const response = await fetch('http://localhost:5000/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: userMessage,
+                    conversation: updatedConversation,
+                }),
+            });
+
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+            const jsonResponse = await response.json();
+
+            setConversation(jsonResponse.conversation);
+            setAiResponse(jsonResponse.response);
+            setTranscript('');
+            setStep(step + 1);
+        } catch (error) {
+            console.error('Flask API와 통신 중 오류 발생:', error);
         }
-
-        const recognition = new SpeechRecognition();
-        recognition.lang = 'ko-KR';
-        recognition.interimResults = false;
-
-        recognition.onresult = (event) => {
-            const speechToText = event.results[0][0].transcript;
-            setTranscript(speechToText);
-        };
-
-        recognition.onerror = (event) => {
-            console.error('음성 인식 오류:', event.error);
-        };
-
-        if (isListening) recognition.start();
-        else recognition.stop();
-
-        return () => recognition.stop();
-    }, [isListening]);
-
-    if (showHomeButton) {
-        return (
-            <div className='Learning_Container active'>
-                <div className='LearningWon active'>
-                    <div style={{ height: '100vh', width: '100vw', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <h1 className='MessageForUser'>This is the End of our Test!</h1>
-                        <a href="/Home">
-                            <button className='Home_Button'>Home</button>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    };
 
     return (
-        <div className={`Learning_Container active ${isDone ? 'completed' : ''}`}>
-            <div className='LearningWon active'>
-                <img src='/Turtle_Right.png' alt='AI_Chat_Bot' className='AI_ChatBot_Image'/>
-                <img src='/UserProfile.png' alt='AI_Chat_User3' className='AI_Chat_User_Image'/>
-                {!isListening && !showContinue && (
-                    <img src='/AnswerStart.png' alt='Start' className='AnswerStart' onClick={startListening}/>
-                )}
-                {isListening && (
-                    <img src='/Stop.png' alt='Stop' className='AnswerStart' onClick={handleStop}/>
-                )}
-                {showContinue && (
-                    <img src='/ContinueStart.png' alt='continue' className='Continue' onClick={() => { setShowContinue(false); startListening(); }}/>
-                )}
-                {stopCount >= 2 && (
-                    <img src='/Done.png' onClick={handleDone} className='Done' alt='Done'/>
-                )}
-                <div className='AI_Question'>
-                    <h3>{aiResponse}</h3> {/* AI 응답 출력 */}
+        <div className={`Learning_Container active`}>
+            <div className="LearningWon active">
+                <img src="/Turtle_Right.png" alt="AI_Chat_Bot" className="AI_ChatBot_Image" />
+                <img src="/UserProfile.png" alt="AI_Chat_User3" className="AI_Chat_User_Image" />
+                <div className="chat-container">
+                    <div className="AI_Question">
+                        <h3>{aiResponse}</h3>
+                    </div>
+                    <div className="chat-input">
+                        <input
+                            type="text"
+                            value={transcript}
+                            onChange={(e) => setTranscript(e.target.value)}
+                            placeholder="메시지를 입력하세요..."
+                            className="chat-input-box"
+                        />
+                        <button onClick={handleSendMessage} className="send-button">전송</button>
+                    </div>
                 </div>
-                <div className='User'>
-                    <p>{transcript}</p>
-                </div>
+                {step >= 2 && (
+                    <button onClick={onDone} className="Done">끝내기</button>
+                )}
             </div>
         </div>
     );
 }
 
 export default function Learning() {
+    const [pageNumber, setPageNumber] = useState(1);
     const [showAI, setShowAI] = useState(false);
+    const [selectedPDF, setSelectedPDF] = useState(false);
+    const [triggerPages, setTriggerPages] = useState([]);
+    const [showEndMessage, setShowEndMessage] = useState(false);
+    
+    const handleAITrigger = (pageNumber) => {
+        if (triggerPages.includes(pageNumber)) {
+            setShowAI(true);
+        }
+    };
 
-    const handleAITrigger = () => { 
-        setShowAI(true);
+    const handleAIDone = () => {
+        setShowAI(false);
+    };
+
+    const handlePDFSelected = (file, pages) => {
+        setSelectedPDF(file);
+        setTriggerPages(pages);
+    };
+
+    const handleEnd = () => {
+        setShowEndMessage(true);
     };
 
     return (
         <div>
-            <Link to='/Home'><img className='CIAELogo' src='/CIAE_logo.png' alt='CIAE'/></Link>
-            {showAI ? (
-                <Ai />
+            <Link to="/Home"><img className="CIAELogo" src="/CIAE_logo.png" alt="CIAE" /></Link>
+            {!selectedPDF ? (
+                <PDFSelector onPDFSelected={handlePDFSelected} />
+            ) : showAI ? (
+                <Ai onDone={handleAIDone} />
+            ) : showEndMessage ? (
+                <div className="LearningWon active">
+                    <h1 className='End'>끝!</h1>
+                    <Link to="/Home">
+                        <button className="Home_Button">Home</button>
+                    </Link>
+                </div>
             ) : (
-                <Reading onAITrigger={handleAITrigger} />
+                <Reading onAITrigger={handleAITrigger} selectedPDF={selectedPDF} triggerPages={triggerPages} pageNumber={pageNumber} setPageNumber={setPageNumber} onEnd={handleEnd} />
             )}
         </div>
     );
