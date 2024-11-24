@@ -11,7 +11,7 @@ import Space from './components/TurtleVillage/Space';
 import Sky from './components/TurtleVillage/Sky';
 import Forest from './components/TurtleVillage/Forest';
 import Recommend from './components/Recommend';
-import Login from './components/Login';
+import Login from './components/login';
 
 function List(props) {
   return (
@@ -74,7 +74,7 @@ function App() {
         <Route path="/Sky" element={<Sky />} />
         <Route path="/Forest" element={<Forest />} />
         <Route path="/Recommend" element={<Recommend />} />
-        <Route path='/Login' element={<Login />} />
+        <Route path='/login' element={<Login />} />
       </Routes>
     </div>
   );

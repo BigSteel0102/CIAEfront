@@ -53,7 +53,7 @@ export default function Village() {
 
     const fetchThreads = async () => {
         try {
-            const response = await axios.get('https://flask-app-878850522333/api/community/threads');
+            const response = await axios.get('https://ciaeback-878850522333.asia-northeast3.run.app/community/threads');
             setPosts(response.data);
         } catch (error) {
             console.error('Error fetching threads:', error);
@@ -80,7 +80,7 @@ export default function Village() {
     const handlePostSubmit = async () => {
         if (title && content) {
             try {
-                await axios.post(`https://flask-app-878850522333/api/community/threads/${selectedBoard}/posts`, {
+                await axios.post(`https://ciaeback-878850522333.asia-northeast3.run.app/community/threads/${selectedBoard}/posts`, {
                     title,
                     content,
                 });
@@ -98,7 +98,7 @@ export default function Village() {
 
     const handleListItemClick = async (postId) => {
         try {
-            const response = await axios.get(`https://flask-app-878850522333/api/community/posts/${postId}/comments`);
+            const response = await axios.get(`https://ciaeback-878850522333.asia-northeast3.run.app/community/posts/${postId}/comments`);
             setSelectedPost({ ...posts.find(post => post.id === postId), replies: response.data });
             setMode('detail');
         } catch (error) {
@@ -113,7 +113,7 @@ export default function Village() {
     const handleReplySubmit = async () => {
         if (replies) {
             try {
-                await axios.post(`https://flask-app-878850522333/api/community/posts/${selectedPost.id}/comments`, {
+                await axios.post(`https://ciaeback-878850522333.asia-northeast3.run.app/community/posts/${selectedPost.id}/comments`, {
                     content: replies,
                 });
                 setReplies('');
@@ -138,7 +138,7 @@ export default function Village() {
 
     const handleDeletePost = async (postId) => {
         try {
-            await axios.delete(`https://flask-app-878850522333/api/community/posts/${postId}`);
+            await axios.delete(`https://ciaeback-878850522333.asia-northeast3.run.app/community/posts/${postId}`);
             fetchThreads();
         } catch (error) {
             console.error('Error deleting post:', error);
@@ -147,7 +147,7 @@ export default function Village() {
 
     const handleDeleteComment = async (commentId) => {
         try {
-            await axios.delete(`https://flask-app-878850522333/api/community/comments/${commentId}`);
+            await axios.delete(`https://ciaeback-878850522333.asia-northeast3.run.app/community/comments/${commentId}`);
             fetchThreads();
         } catch (error) {
             console.error('Error deleting comment:', error);

@@ -88,3 +88,25 @@
     top: 37vh;
     color: red;
 }
+
+.start {
+    position: absolute;
+    right: 23.4vw;
+    top: 45vh;
+    display: flex;
+    width: 14.6875vw;
+    height: 2.5688vw;
+    padding: 0.5208vw;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5208vw;
+    flex-shrink: 0;
+    border-radius: var(--Corner-Full, 52.0833vw);
+    background: #52BDFF;
+    box-shadow: 0.0000vw 0.2083vw 0.2083vw 0.00vw rgba(0, 0, 0, 0.25);
+    color: #000;
+    text-align: center;
+    font-family: Inter, sans-serif;
+    font-size: 1.2vw;
+    font-weight: 700;
+}
