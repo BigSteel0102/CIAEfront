@@ -45,10 +45,10 @@ function PDFSelector({ onPDFSelected }) {
                     triggerPages = [43, 69];
                     break;
                 case '/Small.pdf':
-                    triggerPages = [11, 19];
+                    triggerPages = [23, 37];
                     break;
                 case '/Standard.pdf':
-                    triggerPages = [7, 8];
+                    triggerPages = [9, 15];
                     break;
                 default:
                     triggerPages = [];
@@ -212,6 +212,7 @@ export default function Learning() {
     const [selectedPDF, setSelectedPDF] = useState(false);
     const [triggerPages, setTriggerPages] = useState([]);
     const [showEndMessage, setShowEndMessage] = useState(false);
+    const [aiTriggeredAfterEnd, setAiTriggeredAfterEnd] = useState(false);
     
     const handleAITrigger = (pageNumber) => {
         if (triggerPages.includes(pageNumber)) {
@@ -221,6 +222,9 @@ export default function Learning() {
 
     const handleAIDone = () => {
         setShowAI(false);
+        if (aiTriggeredAfterEnd) {
+            setShowEndMessage(true);
+        }
     };
 
     const handlePDFSelected = (file, pages) => {
@@ -229,7 +233,8 @@ export default function Learning() {
     };
 
     const handleEnd = () => {
-        setShowEndMessage(true);
+        setAiTriggeredAfterEnd(true);
+        setShowAI(true);
     };
 
     return (

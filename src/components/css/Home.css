@@ -1,4 +1,4 @@
-/* 메뉴 박스 스타일 */
+/* ë©”ë‰´ ë°•ìŠ¤ ìŠ¤íƒ€ì¼ */
 
 .pageName {
     color: #000;
@@ -43,20 +43,22 @@
 }
 
 .Baby {
-    width: 60rem;
+    width: 27.76041dvw;
+    height: 29.72222222222222vh;
     position: absolute;
+    top: 22.5vh;
     left: 4.0458vw;
 }
 
 .CIAEIntro {
     color: #000;
     font-family: Inter;
-    font-size: 3rem;
+    font-size: 1.6rem;
     font-style: normal;
     font-weight: 700;
     line-height: 100%; /* 30px */
     position: absolute;
-    top: 6.070vh;
+    top: 15.070vh;
 }
 
 .SiteIntro {
