@@ -68,7 +68,7 @@ function App() {
 
       {/* 페이지별 라우팅 설정 */}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/Login" element={
           user ? <Navigate to="/Home" /> : <Login />
         } />

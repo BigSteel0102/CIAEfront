@@ -7,9 +7,9 @@ import axios from 'axios';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `${process.env.PUBLIC_URL}/pdf.worker.mjs`;
 
-async function callOpenAI(messages, setAiResponse) {
+async function callOpenAI(messages, setAiResponse, apiUrl) {
     try {
-        const response = await axios.post('http://127.0.0.1:5000/api/getAIResponse', {
+        const response = await axios.post(apiUrl, {
             messages: messages
         });
 
@@ -76,7 +76,7 @@ function PDFSelector({ onPDFSelected }) {
     );
 }
 
-function Ai({ onDone }) {
+function Ai({ onDone, initQuestionUrl, aiApiUrl }) {
     const [InitQuestion, setInitQuestion] = useState(null);
     const [messages, setMessages] = useState([]);
     const [transcript, setTranscript] = useState('');
@@ -85,15 +85,15 @@ function Ai({ onDone }) {
     const [stopCount, setStopCount] = useState(0);
 
     useEffect(() => {
-    axios
-        .get("http://127.0.0.1:5000/api/InitQuestion")
-        .then((response) => {
-            setInitQuestion(response.data);
-            setAiResponse(response.data);
-            setMessages([{ "role": "system", "content": response.data }]);
-        })
-        .catch((error) => console.error("Error fetching data:", error));
-}, []);
+        axios
+            .get(initQuestionUrl)
+            .then((response) => {
+                setInitQuestion(response.data);
+                setAiResponse(response.data);
+                setMessages([{ "role": "system", "content": response.data }]);
+            })
+            .catch((error) => console.error("Error fetching data:", error));
+    }, [initQuestionUrl]);
 
     const handleUserInput = () => {
         setStopCount(stopCount + 1);
@@ -104,7 +104,7 @@ function Ai({ onDone }) {
         callOpenAI(updatedMessages, (response) => {
             setAiResponse(response);
             setMessages([...updatedMessages, { "role": "assistant", "content": response }]);
-        });
+        }, aiApiUrl);
 
         setTranscript('');
     };
@@ -213,9 +213,11 @@ export default function Learning() {
     const [triggerPages, setTriggerPages] = useState([]);
     const [showEndMessage, setShowEndMessage] = useState(false);
     const [aiTriggeredAfterEnd, setAiTriggeredAfterEnd] = useState(false);
-    
+    const [aiVersion, setAiVersion] = useState(null);
+
     const handleAITrigger = (pageNumber) => {
         if (triggerPages.includes(pageNumber)) {
+            setAiVersion(pageNumber % 2 === 0 ? 'ai1' : 'ai2'); // Alternate between AI versions based on page number
             setShowAI(true);
         }
     };
@@ -243,7 +245,11 @@ export default function Learning() {
             {!selectedPDF ? (
                 <PDFSelector onPDFSelected={handlePDFSelected} />
             ) : showAI ? (
-                <Ai onDone={handleAIDone} />
+                aiVersion === 'ai1' ? (
+                    <Ai onDone={handleAIDone} initQuestionUrl="https://ciaeback-878850522333.asia-northeast3.run.app/tempAI/Question/Init1" aiApiUrl="https://ciaeback-878850522333.asia-northeast3.run.app/tempAI/Question/Chapter1" />
+                ) : (
+                    <Ai onDone={handleAIDone} initQuestionUrl="https://ciaeback-878850522333.asia-northeast3.run.app/tempAI/Question/Init2" aiApiUrl="https://ciaeback-878850522333.asia-northeast3.run.app/tempAI/Question/Chapter2" />
+                )
             ) : showEndMessage ? (
                 <div className="LearningWon active">
                     <h1 className='End'>끝!</h1>

@@ -1,9 +1,17 @@
 import './css/Home.css';
-import React from 'react';
-import { Link } from 'react-router-dom';  // Link 컴포넌트 가져오기
-
+import React, { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';  // Link 컴포넌트 가져오기
+import { AuthContext} from './auth/authprovider';
 
 export default function Home() {
+    const { logout } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout(); // Call the logout function from AuthProvider
+        navigate('/Login'); // Redirect to login page
+    };
+
     return (
         <div>
             <div className='menu'>
@@ -35,7 +43,7 @@ export default function Home() {
                 <p className='StartYeah'>읽는 재미를 느끼고, 생각하는 힘을 기를 시간! <br/>
                 시작해볼까요?</p>
                 <p className='pageName'>홈 화면</p>
-                <Link to='/Login'><p className='logOut'>로그아웃</p></Link>
+                <p className='logOut' onClick={handleLogout} style={{ cursor: 'pointer', color: 'black' }}>로그아웃</p>
             </div>
         </div>
     );

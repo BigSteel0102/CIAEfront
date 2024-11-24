@@ -1,8 +1,21 @@
 import './css/DeepSea.css';
-import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import axios from "axios";
+import React, { useState, useContext, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../auth/authprovider';
+
+const API_URL = "https://ciaeback-878850522333.asia-northeast3.run.app/games";
 
 export default function DeepSea() {
+    const { logout } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout(); // Call the logout function from AuthProvider
+        navigate('/Login'); // Redirect to login page
+    };
+
+
     const randomPosition = (maxX, maxY) => ({
         x: Math.floor(Math.random() * maxX),
         y: Math.floor(Math.random() * maxY),
@@ -35,14 +48,18 @@ export default function DeepSea() {
         // 최고 점수를 가져오기 위한 API 호출
         const fetchHighestScore = async () => {
             try {
-                const response = await fetch('https://ciaeback-878850522333.asia-northeast3.run.app/games/game_score');
-                const data = await response.json();
-                setHighestScore(data.highest_score);
+                const response = await axios.get(API_URL + "/game_score", {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                    },
+                });
+                if (response.data.Highscore) {
+                    setHighestScore(response.data.Highscore);
+                }
             } catch (error) {
                 console.error("최고 점수를 가져오는 데 실패했습니다", error);
             }
         };
-
         fetchHighestScore();
     }, []);
 
@@ -51,21 +68,18 @@ export default function DeepSea() {
             // 게임 종료 후 현재 점수가 최고 점수보다 높으면 업데이트
             const updateScore = async () => {
                 try {
-                    const response = await fetch('https://ciaeback-878850522333.asia-northeast3.run.app/games/game_score', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
-                        },
-                        body: JSON.stringify({ score }),
+                    const response = await axios.put(API_URL + "/game_score", {score},
+                        {
+                            headers: {
+                                Authorization: `Bearer ${localStorage.getItem("access_token")}`
+                            },
                     });
-                    const data = await response.json();
-                    console.log(data.message);
                     setHighestScore(score);
                 } catch (error) {
                     console.error("최고 점수를 업데이트하는 데 실패했습니다", error);
                 }
             };
+
             updateScore();
         }
     }, [gameOver, score, highestScore]);
@@ -267,7 +281,7 @@ export default function DeepSea() {
         <div>
             <div className='menu'>
                 <p className='pageName'>심해</p>
-                <Link to='/Login'><p className='logOut'>로그아웃</p></Link>
+                <p className='logOut' onClick={handleLogout} style={{ cursor: 'pointer', color: 'black' }}>로그아웃</p>
                 {gameOver && (
                     <div className='gameOver' style={{ opacity: gameOverOpacity, transition: 'opacity 1s' }}>
                         <h1 className='OverMent'>게임 오버!</h1>
@@ -286,7 +300,6 @@ export default function DeepSea() {
                 <div className='DeepSea_Background' ref={backgroundRef}>
                     <p className='Score'>점수: {score}</p>
                     <p className='Life'>목숨: {life}</p>
-                    <p className='HighestScore'>최고점수: {highestScore}</p>
                     <img src='/UnderTheSea.png' className='UnderTheSea_Image' alt='UnderTheSea'></img>
 
                     {/* 물고기 이미지 */}
